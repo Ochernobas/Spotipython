@@ -28,13 +28,14 @@ class LowerFrame(customtkinter.CTkScrollableFrame):
         self.track_frames = []
         self.frames = []
         self.top_level_window = None
+        self.tracks = tracks
 
         for i, track in enumerate(tracks):
             frame = customtkinter.CTkFrame(master=self, width=750, height=60)
 
             img = customtkinter.CTkImage(Image.open(track.cover), size=(100, 100))
             edit_img = customtkinter.CTkImage(
-                Image.open("C:\\Users\\pacot\\PycharmProjects\\Spotipython\\src\\editIcon.png"),
+                Image.open("C:\\Users\\pacot\\PycharmProjects\\Spotipython\\src\\saveIcon.png"),
                 size=(15, 15))
             download_img = customtkinter.CTkImage(
                 Image.open("C:\\Users\\pacot\\PycharmProjects\\Spotipython\\src\\downloadIcon.png"),
@@ -73,7 +74,8 @@ class LowerFrame(customtkinter.CTkScrollableFrame):
                                                   command=lambda t=(track, i): self.edit_track(t),
                                                   image=edit_img, fg_color="transparent", width=25)
             edit_button.grid(row=0, column=1, padx=5, pady=5)
-            download_button = customtkinter.CTkButton(master=buttons, text="", command=lambda t=track: self.download_track(t),
+            download_button = customtkinter.CTkButton(master=buttons, text="",
+                                                      command=lambda t=(track, i): self.download_track(t),
                                                       image=download_img, fg_color="transparent", width=25)
             download_button.grid(row=0, column=2, padx=5, pady=5)
             search_button = customtkinter.CTkButton(master=buttons, text="",
@@ -102,8 +104,13 @@ class LowerFrame(customtkinter.CTkScrollableFrame):
             self.track_frames[track[1]][2].get("0.0", "end")
         ])
 
+    def edit_all_tracks(self, tracks):
+        for i, track in enumerate(tracks):
+            self.edit_track((track, i))
+
     def download_track(self, t):
-        self.master.download(t)
+        self.edit_track(t)
+        self.master.download(t[0])
 
     def search_track(self, track):
         webbrowser.open_new_tab(track[0].youtube_url)
@@ -111,6 +118,14 @@ class LowerFrame(customtkinter.CTkScrollableFrame):
     def delete_track(self, track):
         self.frames[track[1]].destroy()
         self.master.delete(track[0])
+
+
+class BottomPanel(customtkinter.CTkFrame):
+    def __init__(self, master):
+        super().__init__(master)
+
+        self.label = customtkinter.CTkLabel(self, text="Projeto criado por Rafael Soares | Github: Ochernobas", fg_color="transparent")
+        self.label.grid(row=0, column=0, padx=5, pady=5, sticky="n")
 
 
 class Screen(customtkinter.CTk):  # Main Screen, creates all the app GUI, managing every component
@@ -123,15 +138,19 @@ class Screen(customtkinter.CTk):  # Main Screen, creates all the app GUI, managi
         self.title = "Tela Principal"
         self.geometry("790x790")
         self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=1)
+        self.rowconfigure(2, weight=2)
 
         self.upper_frame = UpperFrame(self)
         self.upper_frame.grid(row=0, column=0, padx=10, pady=10, sticky="n")
+
+        self.bottom_panel = BottomPanel(self)
+        self.bottom_panel.grid(row=2, column=0, padx=5, pady=5, sticky="n")
 
     def search(self):
         self.context.input_received(self.upper_frame.input.get())
 
     def download(self, t):
+        self.lower_frame.edit_all_tracks(self.lower_frame.tracks)
         self.context.download_tracks(t)
 
     def delete(self, t):
@@ -139,5 +158,5 @@ class Screen(customtkinter.CTk):  # Main Screen, creates all the app GUI, managi
 
     def draw_tracks(self, tracks):
         self.lower_frame = LowerFrame(self, tracks)
-        self.lower_frame.configure(width=760, height=640)
+        self.lower_frame.configure(width=760, height=630)
         self.lower_frame.grid(row=1, column=0, padx=10, pady=10, sticky="n")

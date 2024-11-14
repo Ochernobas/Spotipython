@@ -21,9 +21,6 @@ class Main:
             self.spotify_results = self.spotify.input(link)
             self.spotify_reader()
 
-        elif link.find("youtube") != -1:
-            pass
-
     #See if it's a playlist or track. Creates Track objects with all the important stuff, stored in self.spotify_tracks
     def spotify_reader(self):
         if "items" in self.spotify_results: #The "items" key is only available in a playlist
