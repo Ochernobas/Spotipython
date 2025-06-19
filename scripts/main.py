@@ -53,6 +53,7 @@ class Main:
         if requested == -1:
             for track in self.spotify_tracks:
                 self.downloader.download_track(track)
+                print(track.title)
         else:
             index = self.spotify_tracks.index(requested)
             self.downloader.download_track(requested)

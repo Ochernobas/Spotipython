@@ -14,7 +14,7 @@ class Downloader: #Class responsible for downloading, converting and tagging eac
 
         url = track.youtube_url
 
-        yt = YouTube(url, on_progress_callback=on_progress)
+        yt = YouTube(url, on_progress_callback=on_progress, use_oauth=True)
         yt.title = track.title
 
         ys = yt.streams.get_lowest_resolution()

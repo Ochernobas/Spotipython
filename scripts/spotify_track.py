@@ -28,17 +28,19 @@ class Track:
         print(self.artists)
 
     def handle_name(self): #Replace all windows forbidden characters
-        self.title.replace("?", "")
-        self.title.replace(":", "")
-        self.title.replace("<", "")
-        self.title.replace(">", "")
-        self.title.replace("|", "")
-        self.title.replace("/", "")
-        self.title.replace("*", "")
+        self.title = self.title.replace("?", "")
+        self.title = self.title.replace(":", "")
+        self.title = self.title.replace("<", "")
+        self.title = self.title.replace(">", "")
+        self.title = self.title.replace("|", "")
+        self.title = self.title.replace("/", "")
+        self.title = self.title.replace("*", "")
+        self.title = self.title.replace("\\", "")
 
 
     def download_image_cover(self): #Downloads the album cover image using requests.get
         response = requests.get(self.cover)
+        print(self.title)
         img_path = f"{self.imgdir}\\{self.title}.jpg"
         with open(img_path, "wb") as f:
             f.write(response.content)
